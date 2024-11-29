@@ -11,13 +11,15 @@ import {
   TbChevronRight,
   TbArrowNarrowLeft,
 } from 'react-icons/tb';
+import { TEmit } from '@ws-ui/webform-editor/dist/hooks/use-emit';
 
 const FileManagerItem: FC<{
   item: IFileItem;
   level: number;
   onFileClick: (item: IFileItem) => void;
   onFolderClick: (item: IFileItem) => void;
-}> = ({ item, level, onFileClick, onFolderClick }) => {
+  emit: TEmit;
+}> = ({ item, level, emit, onFileClick, onFolderClick }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleArrowClick = (e: React.MouseEvent) => {
@@ -38,6 +40,10 @@ const FileManagerItem: FC<{
       <div
         className="file-item-row flex items-center cursor-pointer hover:bg-gray-200 p-2 rounded"
         onClick={handleItemClick}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          if (item.type === 'file') emit('onfilerightclick', item);
+        }}
       >
         {item.type === 'folder' && (
           <span onClick={handleArrowClick}>
@@ -64,6 +70,7 @@ const FileManagerItem: FC<{
               level={level + 1}
               onFileClick={onFileClick}
               onFolderClick={onFolderClick}
+              emit={emit}
             />
           ))}
         </div>
@@ -88,14 +95,9 @@ const FileManager: FC<IFileManagerProps> = ({ style, className, classNames = [] 
   };
 
   const handleFolderClick = (item: IFileItem) => {
-    if (item.type === 'folder') {
-      setCurrentItem(item);
-      setPath((prevPath) => [...prevPath, item]);
-    }
-  };
-
-  const handleEmitClick = (child: IFileItem) => {
-    emit('onfolderclick', child);
+    setCurrentItem(item);
+    setPath((prevPath) => [...prevPath, item]);
+    emit('onfolderclick', item);
   };
 
   const handleBackClick = () => {
@@ -109,24 +111,19 @@ const FileManager: FC<IFileManagerProps> = ({ style, className, classNames = [] 
   };
 
   useEffect(() => {
+    if (!ds) return;
     const listener = async () => {
-      if (ds) {
-        const value = await ds.getValue();
-        if (Array.isArray(value)) {
-          setItems(value);
-        }
+      const value = await ds.getValue();
+      if (Array.isArray(value)) {
+        setItems(value);
       }
     };
 
-    if (ds) {
-      ds.addListener('changed', listener);
-      listener();
-    }
+    ds.addListener('changed', listener);
+    listener();
 
     return () => {
-      if (ds) {
-        ds.removeListener('changed', listener);
-      }
+      ds.removeListener('changed', listener);
     };
   }, [ds]);
 
@@ -141,6 +138,7 @@ const FileManager: FC<IFileManagerProps> = ({ style, className, classNames = [] 
             level={0}
             onFileClick={handleFileClick}
             onFolderClick={handleFolderClick}
+            emit={emit}
           />
         ))}
       </div>
@@ -170,7 +168,7 @@ const FileManager: FC<IFileManagerProps> = ({ style, className, classNames = [] 
                   }}
                   onContextMenu={(e) => {
                     e.preventDefault();
-                    child.type === 'folder' && handleEmitClick(child);
+                    if (child.type === 'file') emit('onfilerightclick', child);
                   }}
                 >
                   {child.type === 'folder' ? (

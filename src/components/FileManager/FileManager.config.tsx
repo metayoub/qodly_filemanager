@@ -45,6 +45,10 @@ export default {
         value: 'onfileclick',
       },
       {
+        label: 'On File Right Click',
+        value: 'onfilerightclick',
+      },
+      {
         label: 'On Folder Click',
         value: 'onfolderclick',
       },

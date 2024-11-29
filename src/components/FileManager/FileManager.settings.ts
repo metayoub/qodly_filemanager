@@ -23,5 +23,5 @@ export const BasicSettings: TSetting[] = [
   ...commonSettings,
   ...load(BASIC_SETTINGS).filter('style.overflow', 'display'),
 ];
-console.log(BasicSettings);
+
 export default Settings;

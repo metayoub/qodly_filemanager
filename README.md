@@ -12,7 +12,6 @@ A robust file management component with advanced navigation and file operations.
 | Name       | Type             | Required | Description                                                                                                                                                        |
 | ---------- | ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Datasource | array of objects | Yes      | The component expects an array of file and folder objects. Each object must have properties defining its type (file or folder), name, size, and lastModified date. |
-|            |
 
 **Some examples of data in this case:**
 
@@ -80,12 +79,42 @@ A robust file management component with advanced navigation and file operations.
 
 ### `onFileClick`
 
-**Type:** `(item: IFileItem) => void`
-
 **Description:** Callback function triggered when a file item is clicked. It receives the clicked file item as an argument, which allows for custom handling of file selections, such as displaying file details or performing other actions.
+
+Example to get File details
+
+```
+exposed function clickFile ()
+	var event, fileData : object
+
+	event = webEvent
+	fileData = event.data
+```
+
+### `onFileRightClick`
+
+**Description:** Callback function triggered when a file item is right-clicked. It receives the clicked file item as an argument, enabling custom actions such as showing a context menu, displaying file details, or performing specific operations.
+
+Example to get File details
+
+```
+exposed function clickFile ()
+	var event, fileData : object
+
+	event = webEvent
+	fileData = event.data
+```
 
 ### `onFolderClick`
 
-**Type:** `(item: IFileItem) => void`
-
 **Description:** Callback function triggered when a folder item is clicked. It receives the clicked folder item as an argument, enabling actions such as navigating into the folder or performing other folder-specific operations.
+
+Example to get Folder details
+
+```
+exposed function clickFolder ()
+	var event, folderData : object
+
+	event = webEvent
+	folderData = event.data
+```
