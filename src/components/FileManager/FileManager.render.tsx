@@ -146,7 +146,7 @@ const FileManager: FC<IFileManagerProps> = ({ style, className, classNames = [] 
   );
 
   const renderContentView = () => (
-    <div className="content-pane w-3/4 p-4">
+    <div className="content-pane w-3/4 p-4 flex flex-col">
       <h3 className="font-semibold text-gray-600 text-lg mb-4">Content</h3>
       <div className="mb-4">
         {path.length > 0 && (
@@ -156,7 +156,7 @@ const FileManager: FC<IFileManagerProps> = ({ style, className, classNames = [] 
         )}
       </div>
       {currentItem ? (
-        <div className="mt-2 space-y-2">
+        <div className="mt-2 space-y-2 flex-1">
           {currentItem.type === 'folder' ? (
             currentItem.children && currentItem.children.length > 0 ? (
               currentItem.children.map((child, index) => (
@@ -191,13 +191,68 @@ const FileManager: FC<IFileManagerProps> = ({ style, className, classNames = [] 
               </div>
             )
           ) : (
-            <div className="file-details p-4 border rounded bg-white shadow">
+            <div className="file-details p-4 border rounded bg-white shadow h-full flex flex-col">
               <h4 className="font-semibold text-gray-700 text-xl">{currentItem.name}</h4>
               <div className="text-sm text-gray-500 mt-2">
                 {currentItem.lastModified && <p>Last Modified: {currentItem.lastModified}</p>}
                 {currentItem.size && <p>Size: {currentItem.size} KB</p>}
               </div>
-              <div className="mt-4">{/* Add any additional file details or actions here */}</div>
+              <div className="mt-4 flex-1">
+                {currentItem.name.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i) && (
+                  <img
+                    src={currentItem.path}
+                    alt={currentItem.name}
+                    className="max-w-full max-h-[500px] object-contain"
+                  />
+                )}
+                {currentItem.name.match(/\.(mp4|webm|ogg)$/i) && (
+                  <video controls className="max-w-full max-h-[500px]">
+                    <source
+                      src={currentItem.path}
+                      type={`video/${currentItem.name.split('.').pop()}`}
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+                )}
+                {currentItem.name.match(/\.(pdf)$/i) && (
+                  <iframe
+                    src={currentItem.path}
+                    className="w-full h-full"
+                    title={currentItem.name}
+                  />
+                )}
+                {currentItem.name.match(/\.(xlsx|xls|csv|ppt|pptx|docx|doc)$/i) && (
+                  <iframe
+                    src={
+                      currentItem.path
+                        ? `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(currentItem.path)}`
+                        : ''
+                    }
+                    className="w-full h-full"
+                    title={currentItem.name}
+                  />
+                )}
+                {currentItem.name.match(/\.(mp3|wav|ogg)$/i) && (
+                  <audio controls className="w-full">
+                    <source
+                      src={currentItem.path}
+                      type={`audio/${currentItem.name.split('.').pop()}`}
+                    />
+                    Your browser does not support the audio element.
+                  </audio>
+                )}
+                {currentItem.name.match(/\.(txt)$/i) && (
+                  <pre className="whitespace-pre-wrap bg-gray-100 p-4 h-full rounded">
+                    {currentItem.path && (
+                      <iframe
+                        src={currentItem.path}
+                        className="w-full h-full"
+                        title={currentItem.name}
+                      />
+                    )}
+                  </pre>
+                )}
+              </div>
             </div>
           )}
         </div>

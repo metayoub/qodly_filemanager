@@ -8,6 +8,7 @@ export interface IFileItem {
   type: 'file' | 'folder';
   lastModified?: string;
   size?: number;
+  path?: string;
   children?: IFileItem[];
 }
 export interface IFileManagerProps extends webforms.ComponentProps {
